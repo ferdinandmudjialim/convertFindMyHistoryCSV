@@ -13,7 +13,8 @@ output_cols = ['baUUID', 'batteryLevel', 'batteryStatus', 'deviceDiscoveryId', '
 
 def main(): 
     with open(args.file) as csv_file: 
-        with open(args.file.split('.csv')[0] + '_google.csv', 'w') as out_file: 
+        out_filename = args.file.split('.csv')[0] + '_google.csv' 
+        with open(out_filename, 'w') as out_file: 
             csv_reader = csv.reader(csv_file, delimiter=',')
             csv_writer = csv.writer(out_file)
            
@@ -24,15 +25,14 @@ def main():
             line_count = 0 
             for row in csv_reader: 
                 if line_count == 0: 
-                    print(f'Column names are {", ".join(row)}')
+                    #print(f'Column names are {", ".join(row)}')
                     line_count += 1 
                 else: 
                     # gotta convert the unix timestamps to utc (index 17) 
                     csv_writer.writerow(row[:17]+[datetime.utcfromtimestamp(int(row[17])/1000).strftime('%Y-%m-%d %H:%M:%S')]+row[18:])
                     line_count += 1 
-            print(f'Processed {line_count} lines.') 
-            
-            
+            print(f'Processed {line_count} lines.')
+            print(f'Output written to {out_filename}')        
 
 
 if __name__=='__main__':
